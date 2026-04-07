@@ -1,0 +1,68 @@
+:root {
+  --bg: #F9F8F6;
+  --surface: #FFFFFF;
+  --text: #2C3E2F;
+  --muted: #7F8C8D;
+  --border: #E2E6E3;
+  --accent: #A3C4BC;
+  --accent-2: #D6CFC7;
+  --radius: 8px;
+}
+
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
+
+html { position: relative; min-height: 100%; }
+body {
+  margin-bottom: 60px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.navbar {
+  background: rgba(255,255,255,0.9) !important;
+  border-bottom: 1px solid var(--border) !important;
+  backdrop-filter: blur(8px);
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.table {
+  --bs-table-border-color: var(--border);
+}
+
+.btn {
+  border-radius: var(--radius);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #93b8b0;
+  --bs-btn-hover-border-color: #93b8b0;
+  --bs-btn-color: #16302a;
+  --bs-btn-hover-color: #16302a;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #2f5d54;
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: var(--accent);
+  --bs-btn-hover-border-color: var(--accent);
+  --bs-btn-hover-color: #16302a;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem rgba(255,255,255,0.9), 0 0 0 0.25rem rgba(163, 196, 188, 0.55);
+}
+
+.form-control, .form-select {
+  border-radius: var(--radius);
+  border-color: var(--border);
+}
+
+.text-muted { color: var(--muted) !important; }

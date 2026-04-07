@@ -1,0 +1,30 @@
+﻿@model MuseumWebApp.Models.TourSchedule
+@{
+    ViewData["Title"] = "Добавить расписание";
+}
+<h1>Добавить расписание</h1>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="TourId"></label>
+        <select asp-for="TourId" asp-items="ViewBag.TourId" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="GuideId"></label>
+        <select asp-for="GuideId" asp-items="ViewBag.GuideId" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="StartTime"></label>
+        <input asp-for="StartTime" class="form-control" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-2">
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

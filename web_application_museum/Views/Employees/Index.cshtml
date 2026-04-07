@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MuseumWebApp.Models.Employee>
+@{
+    ViewData["Title"] = "Сотрудники";
+}
+<h1>Сотрудники</h1>
+<p><a asp-action="Create" class="btn btn-primary">Добавить сотрудника</a></p>
+<table class="table">
+    <thead><tr><th>ФИО</th><th>Должность</th><th>Дата найма</th><th>Логин</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FullName</td>
+                <td>@item.Position?.Title</td>
+                <td>@item.HireDate.ToShortDateString()</td>
+                <td>@item.Login</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
