@@ -20,8 +20,4 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include=".cursor\rules\csharp-rules.mdc" />
-  </ItemGroup>
-
 </Project>

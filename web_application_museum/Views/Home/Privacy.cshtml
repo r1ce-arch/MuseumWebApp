@@ -1,6 +1,38 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Политика конфиденциальности";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="p-4 p-md-5" style="background-color: #FFFFFF; border-radius: 32px; box-shadow: 0 8px 20px rgba(0,0,0,0.03);">
+                <h1 class="display-5 fw-semibold mb-4" style="color: #2C3E2F;">@ViewData["Title"]</h1>
+                <hr style="width: 60px; height: 3px; background-color: #A3C4BC; border: none; margin-bottom: 2rem;">
+
+                <p class="lead" style="color: #5A6B5C;">Мы ценим ваше доверие и заботимся о защите данных. Настоящая политика объясняет, как обрабатывается информация в этой системе.</p>
+
+                <h4 class="mt-4" style="color: #2C3E2F;">1. Какие данные собираются</h4>
+                <p style="color: #7F8C8D;">В процессе использования приложения могут обрабатываться:</p>
+                <ul style="color: #7F8C8D;">
+                    <li>Имена и контактные данные сотрудников музея</li>
+                    <li>Логины и хешированные пароли для входа в систему</li>
+                    <li>Информация о проданных билетах (имя посетителя, дата, оплата)</li>
+                    <li>Данные об экскурсиях, расписании и экспонатах</li>
+                </ul>
+
+                <h4 class="mt-4" style="color: #2C3E2F;">2. Как используются данные</h4>
+                <p style="color: #7F8C8D;">Все данные используются исключительно для внутреннего управления музеем: планирования экскурсий, учёта билетов, управления персоналом. Данные не передаются третьим лицам без явного согласия.</p>
+
+                <h4 class="mt-4" style="color: #2C3E2F;">3. Безопасность</h4>
+                <p style="color: #7F8C8D;">Пароли хранятся в хешированном виде (BCrypt). Доступ к системе имеют только авторизованные сотрудники. Рекомендуется использовать надёжные пароли и не передавать их другим лицам.</p>
+
+                <h4 class="mt-4" style="color: #2C3E2F;">4. Контакты</h4>
+                <p style="color: #7F8C8D;">По вопросам конфиденциальности обращайтесь к администратору музея.</p>
+
+                <div class="mt-5 pt-3 text-center">
+                    <a asp-controller="Home" asp-action="Index" class="btn" style="background-color: #A3C4BC; color: white; border-radius: 40px; padding: 8px 32px;">← Вернуться на главную</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
