@@ -2,24 +2,42 @@
 @{
     ViewData["Title"] = "Сотрудники";
 }
-<h1>Сотрудники</h1>
-<p><a asp-action="Create" class="btn btn-primary">Добавить сотрудника</a></p>
-<table class="table">
-    <thead><tr><th>ФИО</th><th>Должность</th><th>Дата найма</th><th>Логин</th><th></th></tr></thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.FullName</td>
-                <td>@item.Position?.Title</td>
-                <td>@item.HireDate.ToShortDateString()</td>
-                <td>@item.Login</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h3 mb-0">Сотрудники</h1>
+    <a asp-action="Create" class="btn btn-primary">Добавить</a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Должность</th>
+                        <th>Дата найма</th>
+                        <th>Логин</th>
+                        <th style="width:1%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold align-middle">@item.FullName</td>
+                            <td class="align-middle text-muted">@item.Position?.Title</td>
+                            <td class="align-middle text-muted">@item.HireDate.ToShortDateString()</td>
+                            <td class="align-middle text-muted">@item.Login</td>
+                            <td class="text-end text-nowrap align-middle">
+                                <a asp-action="Edit"    asp-route-id="@item.Id">Изменить</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Детали</a> |
+                                <a asp-action="Delete"  asp-route-id="@item.Id">Удалить</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

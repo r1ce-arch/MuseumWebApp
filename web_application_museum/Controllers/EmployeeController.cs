@@ -16,165 +16,179 @@ namespace MuseumWebApp.Controllers
             _context = context;
         }
 
-        // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var employees = _context.Employees
-                .Include(e => e.Position);
-            return View(await employees.ToListAsync());
+            return View(await _context.Employees.Include(e => e.Position).ToListAsync());
         }
 
-        // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employees
-                .Include(e => e.Position)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            return View(employee);
+            if (id == null) return NotFound();
+            var emp = await _context.Employees.Include(e => e.Position).FirstOrDefaultAsync(m => m.Id == id);
+            return emp == null ? NotFound() : View(emp);
         }
 
         // GET: Employees/Create
         public IActionResult Create()
         {
             ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title");
-            return View();
+            return View(new Employee { HireDate = DateTime.Today });
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,PositionId,HireDate,Login,Password,ConfirmPassword")] Employee employee)
+        public async Task<IActionResult> Create(
+            string fullName,
+            int positionId,
+            string hireDateStr,
+            string? login,
+            string? password,
+            string? confirmPassword)
         {
-            if (string.IsNullOrWhiteSpace(employee.Password))
+            bool hasErrors = false;
+
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                ModelState.AddModelError(nameof(Employee.Password), "Введите пароль.");
+                ModelState.AddModelError("fullName", "Введите ФИО.");
+                hasErrors = true;
             }
 
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(password))
             {
-                employee.PasswordHash = BCryptNet.HashPassword(employee.Password);
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("password", "Введите пароль.");
+                hasErrors = true;
             }
-            ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", employee.PositionId);
-            return View(employee);
+            else if (password.Length < 6)
+            {
+                ModelState.AddModelError("password", "Пароль должен быть не короче 6 символов.");
+                hasErrors = true;
+            }
+            else if (password != confirmPassword)
+            {
+                ModelState.AddModelError("confirmPassword", "Пароли не совпадают.");
+                hasErrors = true;
+            }
+
+            if (hasErrors)
+            {
+                ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", positionId);
+                var vm = new Employee
+                {
+                    FullName = fullName ?? "",
+                    PositionId = positionId,
+                    HireDate = DateTime.Today,
+                    Login = login
+                };
+                return View(vm);
+            }
+
+            // Парсим дату вручную чтобы избежать Kind=Unspecified
+            DateTime hireDate = DateTime.SpecifyKind(
+                DateTime.TryParse(hireDateStr, out var parsed) ? parsed : DateTime.Today,
+                DateTimeKind.Utc);
+
+            var employee = new Employee
+            {
+                FullName = fullName!,
+                PositionId = positionId,
+                HireDate = hireDate,
+                Login = login,
+                PasswordHash = BCryptNet.HashPassword(password)
+            };
+
+            _context.Add(employee);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-            ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", employee.PositionId);
-            return View(employee);
+            if (id == null) return NotFound();
+            var emp = await _context.Employees.FindAsync(id);
+            if (emp == null) return NotFound();
+            ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", emp.PositionId);
+            return View(emp);
         }
 
         // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,PositionId,HireDate,Login,Password,ConfirmPassword")] Employee employee)
+        public async Task<IActionResult> Edit(
+            int id,
+            string fullName,
+            int positionId,
+            string hireDateStr,
+            string? login,
+            string? password,
+            string? confirmPassword)
         {
-            if (id != employee.Id)
+            bool hasErrors = false;
+
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                return NotFound();
+                ModelState.AddModelError("fullName", "Введите ФИО.");
+                hasErrors = true;
             }
 
-            if (ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(password))
             {
-                try
+                if (password.Length < 6)
                 {
-                    var existing = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
-                    if (existing == null)
-                    {
-                        return NotFound();
-                    }
-
-                    existing.FullName = employee.FullName;
-                    existing.PositionId = employee.PositionId;
-                    existing.HireDate = employee.HireDate;
-                    existing.Login = employee.Login;
-
-                    if (!string.IsNullOrWhiteSpace(employee.Password))
-                    {
-                        existing.PasswordHash = BCryptNet.HashPassword(employee.Password);
-                    }
-
-                    _context.Update(existing);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("password", "Пароль должен быть не короче 6 символов.");
+                    hasErrors = true;
                 }
-                catch (DbUpdateConcurrencyException)
+                else if (password != confirmPassword)
                 {
-                    if (!EmployeeExists(employee.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("confirmPassword", "Пароли не совпадают.");
+                    hasErrors = true;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", employee.PositionId);
-            return View(employee);
-        }
 
-        // GET: Employees/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
+            var existing = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            if (existing == null) return NotFound();
+
+            if (hasErrors)
             {
-                return NotFound();
+                ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title", positionId);
+                existing.FullName = fullName ?? existing.FullName;
+                existing.PositionId = positionId;
+                existing.Login = login;
+                return View(existing);
             }
 
-            var employee = await _context.Employees
-                .Include(e => e.Position)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+            DateTime hireDate = DateTime.SpecifyKind(
+                DateTime.TryParse(hireDateStr, out var parsed) ? parsed : existing.HireDate,
+                DateTimeKind.Utc);
 
-            return View(employee);
-        }
+            existing.FullName = fullName!;
+            existing.PositionId = positionId;
+            existing.HireDate = hireDate;
+            existing.Login = login;
 
-        // POST: Employees/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
-            {
-                _context.Employees.Remove(employee);
-            }
+            if (!string.IsNullOrWhiteSpace(password))
+                existing.PasswordHash = BCryptNet.HashPassword(password);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return _context.Employees.Any(e => e.Id == id);
+            if (id == null) return NotFound();
+            var emp = await _context.Employees.Include(e => e.Position).FirstOrDefaultAsync(m => m.Id == id);
+            return emp == null ? NotFound() : View(emp);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var emp = await _context.Employees.FindAsync(id);
+            if (emp != null) _context.Employees.Remove(emp);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

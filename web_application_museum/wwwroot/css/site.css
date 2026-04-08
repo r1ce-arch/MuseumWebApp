@@ -1,68 +1,268 @@
+/* Тема */
 :root {
-  --bg: #F9F8F6;
-  --surface: #FFFFFF;
-  --text: #2C3E2F;
-  --muted: #7F8C8D;
-  --border: #E2E6E3;
-  --accent: #A3C4BC;
-  --accent-2: #D6CFC7;
-  --radius: 8px;
+  /* Фоны */
+  --bg-page:      #121212;
+  --bg-surface:   #181818;
+  --bg-surface-2: #242424;
+  --bg-input:     #2a2a2a;
+
+  /* Текст */
+  --text-primary:   #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --text-heading:   #ffffff;
+  --text-on-accent: #000000; /* текст на кнопке */
+
+  /* Акцент — меняй здесь цвет всех кнопок и ссылок */
+  --accent:       #1db954; /* ← цвет кнопок изменён на зелёный */
+  --accent-hover: #17a349;
+  --accent-soft:  #1db954;
+
+  /* Форма кнопок: 500px = pill, 8px = прямоугольные */
+  --btn-radius: 500px;
+
+  /* Границы */
+  --border: #2a2a2a;
+
+  /* Опасность */
+  --danger:      #c0392b;
+  --danger-hover:#96281b;
+  --danger-soft: #e74c3c;
+
+  /* Вторичные кнопки */
+  --btn-secondary-bg:     #2a2a2a;
+  --btn-secondary-border: #3a3a3a;
+  --btn-secondary-text:   #b0b0b0;
+
+  /* Прочее */
+  --radius:     10px;
+  --focus-ring: rgba(29, 185, 84, 0.35);
+  --table-row-hover-bg:   #242424;
+  --table-row-hover-text: #ffffff;
 }
 
-html { font-size: 14px; }
+html { font-size: 14px; position: relative; min-height: 100%; }
 @media (min-width: 768px) { html { font-size: 16px; } }
 
-html { position: relative; min-height: 100%; }
 body {
   margin-bottom: 60px;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+h1, h2, h3, h4, h5 { color: var(--text-heading); font-weight: 700; }
+
+a { color: var(--accent-soft); text-decoration: none; }
+a:hover { color: var(--text-heading); }
+
+.text-muted  { color: var(--text-secondary) !important; }
+.fw-semibold { color: var(--text-heading); }
+.text-danger { color: var(--danger-soft) !important; }
+
+/* Навбар */
 .navbar {
-  background: rgba(255,255,255,0.9) !important;
+  background: var(--bg-surface) !important;
   border-bottom: 1px solid var(--border) !important;
-  backdrop-filter: blur(8px);
+  padding: 0 16px;
 }
 
+.navbar-brand {
+  color: var(--text-heading) !important;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.nav-link,
+.nav-link.text-dark {
+  color: var(--text-secondary) !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 12px !important;
+  transition: color 0.15s;
+}
+
+.nav-link:hover,
+.nav-link.text-dark:hover { color: var(--text-heading) !important; }
+
+.navbar-toggler { border-color: var(--border); }
+.navbar-toggler-icon { filter: invert(1); }
+
+/* Карточки */
 .card {
+  background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--surface);
+  color: var(--text-primary);
+  transition: background 0.2s;
 }
 
+.card:hover { background: var(--bg-surface-2); }
+.card-body  { background: transparent; border-radius: var(--radius); }
+
+/* Таблицы */
 .table {
+  --bs-table-bg: transparent;
   --bs-table-border-color: var(--border);
+  --bs-table-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
+.table thead.table-light th {
+  background: var(--bg-surface-2) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border) !important;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.table td, .table th { border-color: var(--border); }
+
+.table-hover tbody tr:hover {
+  background: var(--table-row-hover-bg) !important;
+  color: var(--table-row-hover-text) !important;
+}
+
+/* Ограничение длинного текста в ячейках */
+.table td.td-desc {
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Кнопки */
 .btn {
-  border-radius: var(--radius);
+  border-radius: var(--btn-radius);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  padding: 7px 18px;
+  transition: transform 0.1s, background 0.15s;
 }
 
+.btn:active { transform: scale(0.97); }
+
+/* Основная кнопка — цвет берётся из --accent */
 .btn-primary {
-  --bs-btn-bg: var(--accent);
-  --bs-btn-border-color: var(--accent);
-  --bs-btn-hover-bg: #93b8b0;
-  --bs-btn-hover-border-color: #93b8b0;
-  --bs-btn-color: #16302a;
-  --bs-btn-hover-color: #16302a;
+  --bs-btn-bg:                 var(--accent);
+  --bs-btn-border-color:       var(--accent);
+  --bs-btn-hover-bg:           var(--accent-hover);
+  --bs-btn-hover-border-color: var(--accent-hover);
+  --bs-btn-color:              var(--text-on-accent);
+  --bs-btn-hover-color:        var(--text-on-accent);
 }
 
 .btn-outline-primary {
-  --bs-btn-color: #2f5d54;
-  --bs-btn-border-color: var(--accent);
-  --bs-btn-hover-bg: var(--accent);
+  --bs-btn-color:              var(--accent-soft);
+  --bs-btn-border-color:       var(--accent-soft);
+  --bs-btn-hover-bg:           var(--accent);
   --bs-btn-hover-border-color: var(--accent);
-  --bs-btn-hover-color: #16302a;
+  --bs-btn-hover-color:        var(--text-on-accent);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem rgba(255,255,255,0.9), 0 0 0 0.25rem rgba(163, 196, 188, 0.55);
+.btn-secondary {
+  --bs-btn-bg:           var(--btn-secondary-bg);
+  --bs-btn-border-color: var(--btn-secondary-border);
+  --bs-btn-color:        var(--btn-secondary-text);
+  --bs-btn-hover-bg:     var(--btn-secondary-border);
+  --bs-btn-hover-color:  var(--text-heading);
 }
 
-.form-control, .form-select {
+.btn-outline-secondary {
+  --bs-btn-color:        var(--text-secondary);
+  --bs-btn-border-color: var(--btn-secondary-border);
+  --bs-btn-hover-bg:     var(--btn-secondary-bg);
+  --bs-btn-hover-color:  var(--text-heading);
+}
+
+.btn-danger {
+  --bs-btn-bg:                 var(--danger);
+  --bs-btn-border-color:       var(--danger);
+  --bs-btn-hover-bg:           var(--danger-hover);
+  --bs-btn-hover-border-color: var(--danger-hover);
+  --bs-btn-color: #fff;
+}
+
+.btn-outline-danger {
+  --bs-btn-color:              var(--danger-soft);
+  --bs-btn-border-color:       var(--danger-soft);
+  --bs-btn-hover-bg:           var(--danger);
+  --bs-btn-hover-border-color: var(--danger);
+  --bs-btn-hover-color: #fff;
+}
+
+.btn:focus, .btn:active:focus,
+.form-control:focus, .form-check-input:focus, .form-select:focus {
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  outline: none;
+}
+
+/* Формы */
+.form-control,
+.form-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  border-color: var(--border);
+  color: var(--text-primary);
+  padding: 10px 14px;
 }
 
-.text-muted { color: var(--muted) !important; }
+.form-control:focus,
+.form-select:focus {
+  background: var(--bg-input);
+  border-color: var(--accent);
+  color: var(--text-heading);
+}
+
+.form-control::placeholder { color: var(--text-secondary); }
+
+.form-label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.input-group-text {
+  background: var(--bg-surface-2);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+select option {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+/* Футер */
+.footer {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border) !important;
+  padding: 14px 0;
+  font-size: 0.8rem;
+}
+
+/* Цвет кнопок */
+.btn-primary {
+    background-color: #006633; /* цвет кнопки */
+    border-color: #006633;
+}
+
+    .btn-primary:hover {
+        background-color: #1DB954; /* цвет при наведении */
+        border-color: #1DB954;
+    }
+
+    .btn-primary:active {
+        background-color: #1DB954 !important;
+        border-color: #1DB954 !important;
+    }
+
+.footer a { color: var(--text-secondary); }
+.footer a:hover { color: var(--text-heading); }

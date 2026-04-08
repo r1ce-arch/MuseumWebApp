@@ -8,9 +8,15 @@
 
 <div class="card shadow-sm">
     <div class="card-body">
+        @if (!string.IsNullOrEmpty(Model.PhotoPath))
+        {
+            <div class="mb-3">
+                <img src="@Model.PhotoPath" alt="@Model.Name" style="max-height:150px;border-radius:8px;" />
+            </div>
+        }
         <div class="mb-3">
             <div class="fw-semibold">@Model.Name</div>
-            <div class="text-muted">@Model.Era @if (Model.Year != null) { <span>· @Model.Year</span> }</div>
+            @if (Model.Year != null) { <div class="text-muted">@Model.Year г.</div> }
         </div>
 
         <form asp-action="Delete">
@@ -22,4 +28,3 @@
         </form>
     </div>
 </div>
-

@@ -22,15 +22,21 @@ namespace MuseumWebApp.Controllers
                 .OrderBy(t => t.Title)
                 .ToListAsync();
 
+            // Показываем всех сотрудников, не фильтруем по должности
             var guides = await _context.Employees
                 .AsNoTracking()
                 .Include(e => e.Position)
-                .Where(e => e.Position != null && e.Position.Title == "Экскурсовод")
                 .OrderBy(e => e.FullName)
+                .Select(e => new {
+                    e.Id,
+                    DisplayName = e.Position != null
+                        ? e.FullName + " (" + e.Position.Title + ")"
+                        : e.FullName
+                })
                 .ToListAsync();
 
             ViewData["TourId"] = new SelectList(tours, "Id", "Title", selectedTourId);
-            ViewData["GuideId"] = new SelectList(guides, "Id", "FullName", selectedGuideId);
+            ViewData["GuideId"] = new SelectList(guides, "Id", "DisplayName", selectedGuideId);
         }
 
         // GET: TourSchedules
@@ -72,8 +78,13 @@ namespace MuseumWebApp.Controllers
         // POST: TourSchedules/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TourId,GuideId,StartTime")] TourSchedule tourSchedule)
+        public async Task<IActionResult> Create([Bind("Id,TourId,GuideId")] TourSchedule tourSchedule, string startTimeStr)
         {
+            if (DateTime.TryParse(startTimeStr, out var parsedTime))
+                tourSchedule.StartTime = DateTime.SpecifyKind(parsedTime, DateTimeKind.Utc);
+            else
+                ModelState.AddModelError("startTimeStr", "Укажите корректное время начала.");
+
             if (ModelState.IsValid)
             {
                 _context.Add(tourSchedule);
@@ -104,12 +115,14 @@ namespace MuseumWebApp.Controllers
         // POST: TourSchedules/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TourId,GuideId,StartTime")] TourSchedule tourSchedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TourId,GuideId")] TourSchedule tourSchedule, string startTimeStr)
         {
-            if (id != tourSchedule.Id)
-            {
-                return NotFound();
-            }
+            if (id != tourSchedule.Id) return NotFound();
+
+            if (DateTime.TryParse(startTimeStr, out var parsedTime))
+                tourSchedule.StartTime = DateTime.SpecifyKind(parsedTime, DateTimeKind.Utc);
+            else
+                ModelState.AddModelError("startTimeStr", "Укажите корректное время начала.");
 
             if (ModelState.IsValid)
             {
@@ -120,14 +133,8 @@ namespace MuseumWebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TourScheduleExists(tourSchedule.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!TourScheduleExists(tourSchedule.Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }

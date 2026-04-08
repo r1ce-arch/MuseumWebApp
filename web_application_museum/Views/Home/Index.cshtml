@@ -1,84 +1,121 @@
 ﻿@{
-    ViewData["Title"] = "Главная — Музейное управление";
+    ViewData["Title"] = "Главная";
+    var heroGif = "/images/grass.gif"; /* гифка фона hero-блока */
 }
 
+<style>
+    .hero-block {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+        border: 1px solid var(--border);
+    }
+    .hero-gif {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.15;
+        pointer-events: none;
+    }
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 64px 40px;
+    }
+    .section-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+    .nav-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: background 0.15s, transform 0.15s;
+        text-decoration: none;
+        color: var(--text-primary);
+    }
+    .nav-card:hover {
+        background: var(--bg-surface-2);
+        transform: translateY(-2px);
+        color: var(--text-heading);
+    }
+    .nav-card-icon {
+        font-size: 1.6rem;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-surface-2);
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+    .nav-card-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-heading);
+        margin-bottom: 2px;
+    }
+    .nav-card-desc {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+</style>
+
 <div class="container mt-4">
-    <!-- Hero-блок -->
-    <div class="hero-section text-center py-5 px-3 mb-5" style="background-color: #F5F2EB; border-radius: 24px;">
-        <h1 class="display-4 fw-semibold" style="color: #2C3E2F;">Добро пожаловать в систему управления музеем</h1>
-        <p class="lead mt-3" style="color: #5A6B5C;">Управляйте экскурсиями, билетами, сотрудниками и экспонатами в одном месте</p>
-        <hr class="my-4" style="width: 80px; height: 3px; background-color: #A3C4BC; border: none; margin: 1.5rem auto;">
-        <div class="mt-4">
-            <a asp-controller="Tours" asp-action="Index" class="btn btn-lg px-4" style="background-color: #A3C4BC; color: white; border-radius: 30px;">Начать работу →</a>
+
+    <!-- Hero -->
+    <div class="hero-block mb-5">
+        @if (!string.IsNullOrEmpty(heroGif))
+        {
+            <img src="@heroGif" class="hero-gif" alt="" />
+        }
+        <div class="hero-content text-center">
+            <p class="section-title">Добро пожаловать</p>
+            <h1 class="display-5 fw-bold mb-3">Система управления музеем</h1>
+            <p class="text-muted mb-4" style="max-width:480px; margin:0 auto;">
+                Экскурсии, билеты, сотрудники и экспонаты — всё в одном месте
+            </p>
+            <a asp-controller="Tours" asp-action="Index" class="btn btn-primary px-5">
+                Начать работу
+            </a>
         </div>
     </div>
 
-    <!-- Карточки основных разделов -->
-    <div class="row g-4 text-center">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">🎟️</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Экскурсии</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Создавайте и редактируйте экскурсии, устанавливайте цены и длительность.</p>
-                    <a asp-controller="Tours" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
+    <!-- Разделы -->
+    <p class="section-title">Разделы</p>
+    <div class="row g-3">
+        @foreach (var item in new[] {
+            new { Icon = "🎟️", Title = "Экскурсии",  Desc = "Цены, описания, длительность",     Ctrl = "Tours",         Act = "Index" },
+            new { Icon = "📅", Title = "Расписание", Desc = "Гиды, даты и время начала",         Ctrl = "TourSchedules", Act = "Index" },
+            new { Icon = "🎫", Title = "Билеты",     Desc = "Продажа и учёт посетителей",        Ctrl = "Tickets",       Act = "Index" },
+            new { Icon = "👥", Title = "Сотрудники", Desc = "Персонал и учётные записи",         Ctrl = "Employees",     Act = "Index" },
+            new { Icon = "🏺", Title = "Экспонаты",  Desc = "Коллекция с фото",                  Ctrl = "Exhibits",      Act = "Index" },
+            new { Icon = "⚙️", Title = "Должности",  Desc = "Роли и структура персонала",        Ctrl = "Positions",     Act = "Index" },
+        })
+        {
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="@item.Ctrl" asp-action="@item.Act" class="nav-card">
+                    <div class="nav-card-icon">@item.Icon</div>
+                    <div>
+                        <div class="nav-card-title">@item.Title</div>
+                        <p class="nav-card-desc">@item.Desc</p>
+                    </div>
+                </a>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">📅</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Расписание</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Планируйте экскурсии, назначайте гидов и время начала.</p>
-                    <a asp-controller="TourSchedules" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">🎫</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Билеты</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Продавайте билеты, отмечайте оплату и отслеживайте посетителей.</p>
-                    <a asp-controller="Tickets" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">👥</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Сотрудники</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Управляйте персоналом, должностями и учётными записями.</p>
-                    <a asp-controller="Employees" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">🏺</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Экспонаты</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Добавляйте экспонаты, указывайте эпоху и привязывайте к экскурсиям.</p>
-                    <a asp-controller="Exhibits" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background-color: #FFFFFF;">
-                <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 2.5rem;">⚙️</div>
-                    <h5 class="card-title" style="color: #2C3E2F;">Должности</h5>
-                    <p class="card-text" style="color: #7F8C8D;">Настраивайте должности сотрудников (экскурсовод, администратор и др.).</p>
-                    <a asp-controller="Positions" asp-action="Index" class="btn btn-sm mt-2" style="background-color: #E6EFEA; color: #2C3E2F; border-radius: 20px;">Перейти →</a>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 
-    <!-- Небольшая статистика или цитата (опционально) -->
-    <div class="mt-5 p-4 text-center" style="background-color: #F9F8F6; border-radius: 24px;">
-        <p class="mb-0 fst-italic" style="color: #5A6B5C;">«Управление музеем начинается с удобного инструмента»</p>
-    </div>
 </div>

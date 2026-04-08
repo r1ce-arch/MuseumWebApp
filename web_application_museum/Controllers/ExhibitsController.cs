@@ -8,10 +8,12 @@ namespace MuseumWebApp.Controllers
     public class ExhibitsController : Controller
     {
         private readonly MuseumDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ExhibitsController(MuseumDbContext context)
+        public ExhibitsController(MuseumDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: Exhibits
@@ -41,9 +43,12 @@ namespace MuseumWebApp.Controllers
         // POST: Exhibits/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Era,Year")] Exhibit exhibit)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Year")] Exhibit exhibit, IFormFile? photo)
         {
             if (!ModelState.IsValid) return View(exhibit);
+
+            if (photo != null && photo.Length > 0)
+                exhibit.PhotoPath = await SavePhotoAsync(photo);
 
             _context.Add(exhibit);
             await _context.SaveChangesAsync();
@@ -62,11 +67,14 @@ namespace MuseumWebApp.Controllers
         // POST: Exhibits/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Era,Year")] Exhibit exhibit)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Year,PhotoPath")] Exhibit exhibit, IFormFile? photo)
         {
             if (id != exhibit.Id) return NotFound();
 
             if (!ModelState.IsValid) return View(exhibit);
+
+            if (photo != null && photo.Length > 0)
+                exhibit.PhotoPath = await SavePhotoAsync(photo);
 
             try
             {
@@ -112,6 +120,20 @@ namespace MuseumWebApp.Controllers
         {
             return _context.Exhibits.Any(e => e.Id == id);
         }
+
+        private async Task<string> SavePhotoAsync(IFormFile photo)
+        {
+            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "exhibits");
+            Directory.CreateDirectory(uploadsDir);
+
+            var ext = Path.GetExtension(photo.FileName);
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+            await photo.CopyToAsync(stream);
+
+            return $"/uploads/exhibits/{fileName}";
+        }
     }
 }
-

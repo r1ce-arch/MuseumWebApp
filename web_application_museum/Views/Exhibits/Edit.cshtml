@@ -7,20 +7,15 @@
 
 <div class="card shadow-sm">
     <div class="card-body">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PhotoPath" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label">Название</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Era" class="form-label">Эпоха</label>
-                <input asp-for="Era" class="form-control" />
-                <span asp-validation-for="Era" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -33,6 +28,18 @@
                 <label asp-for="Description" class="form-label">Описание</label>
                 <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="photo" class="form-label">Фото</label>
+                @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.PhotoPath" alt="@Model.Name" style="max-height:150px;border-radius:8px;" />
+                        <div class="text-muted small mt-1">Загрузите новое фото, чтобы заменить текущее</div>
+                    </div>
+                }
+                <input type="file" name="photo" id="photo" class="form-control" accept="image/*" />
             </div>
 
             <div class="d-flex gap-2">
@@ -48,4 +55,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-

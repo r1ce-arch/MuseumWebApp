@@ -2,21 +2,36 @@
 @{
     ViewData["Title"] = "Должности";
 }
-<h1>Должности</h1>
-<p><a asp-action="Create" class="btn btn-primary">Добавить должность</a></p>
-<table class="table">
-    <thead><tr><th>Название</th><th></th></tr></thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h3 mb-0">Должности</h1>
+    <a asp-action="Create" class="btn btn-primary">Добавить</a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Название</th>
+                        <th style="width:1%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold align-middle">@item.Title</td>
+                            <td class="text-end text-nowrap align-middle">
+                                <a asp-action="Edit"    asp-route-id="@item.Id">Изменить</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Детали</a> |
+                                <a asp-action="Delete"  asp-route-id="@item.Id">Удалить</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

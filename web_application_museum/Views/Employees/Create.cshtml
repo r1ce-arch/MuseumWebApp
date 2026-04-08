@@ -2,43 +2,65 @@
 @{
     ViewData["Title"] = "Добавить сотрудника";
 }
-<h1>Create</h1>
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+<h1>Добавить сотрудника</h1>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group mb-3">
+        <label for="fullName">ФИО</label>
+        <input type="text" name="fullName" id="fullName" class="form-control"
+               value="@Model?.FullName" />
+        <span class="text-danger">@Html.ValidationMessage("fullName")</span>
     </div>
-    <div class="form-group">
-        <label asp-for="PositionId"></label>
-        <select asp-for="PositionId" asp-items="ViewBag.PositionId" class="form-control"></select>
+
+    <div class="form-group mb-3">
+        <label for="positionId">Должность</label>
+        <select name="positionId" id="positionId" class="form-control">
+            <option value="0">— Выберите должность —</option>
+            @if (ViewData["PositionId"] is Microsoft.AspNetCore.Mvc.Rendering.SelectList list)
+            {
+                foreach (var item in list)
+                {
+                    if (item.Value == Model?.PositionId.ToString())
+                    {
+                        <option value="@item.Value" selected>@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            }
+        </select>
     </div>
-    <div class="form-group">
-        <label asp-for="HireDate"></label>
-        <input asp-for="HireDate" class="form-control" type="date" />
+
+    <div class="form-group mb-3">
+        <label for="hireDateStr">Дата найма</label>
+        <input type="date" name="hireDateStr" id="hireDateStr" class="form-control"
+               value="@(Model?.HireDate.ToString("yyyy-MM-dd") ?? DateTime.Today.ToString("yyyy-MM-dd"))" />
     </div>
-    <div class="form-group">
-        <label asp-for="Login"></label>
-        <input asp-for="Login" class="form-control" />
+
+    <div class="form-group mb-3">
+        <label for="login">Логин</label>
+        <input type="text" name="login" id="login" class="form-control"
+               value="@Model?.Login" />
     </div>
-    <div class="form-group">
-        <label asp-for="Password">Пароль</label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
+
+    <div class="form-group mb-3">
+        <label for="password">Пароль</label>
+        <input type="password" name="password" id="password" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessage("password")</span>
     </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword">Подтверждение пароля</label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+    <div class="form-group mb-3">
+        <label for="confirmPassword">Подтверждение пароля</label>
+        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessage("confirmPassword")</span>
     </div>
+
     <div class="form-group mt-2">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
     </div>
 </form>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

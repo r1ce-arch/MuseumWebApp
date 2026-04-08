@@ -5,22 +5,26 @@
 <h1>Добавить расписание</h1>
 <form asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="TourId"></label>
-        <select asp-for="TourId" asp-items="ViewBag.TourId" class="form-control"></select>
+    <div class="form-group mb-3">
+        <label asp-for="TourId">Экскурсия</label>
+        <select asp-for="TourId" asp-items="ViewBag.TourId" class="form-control">
+            <option value="">— Выберите экскурсию —</option>
+        </select>
     </div>
-    <div class="form-group">
-        <label asp-for="GuideId"></label>
-        <select asp-for="GuideId" asp-items="ViewBag.GuideId" class="form-control"></select>
+    <div class="form-group mb-3">
+        <label asp-for="GuideId">Гид</label>
+        <select asp-for="GuideId" asp-items="ViewBag.GuideId" class="form-control">
+            <option value="">— Выберите гида —</option>
+        </select>
     </div>
-    <div class="form-group">
-        <label asp-for="StartTime"></label>
-        <input asp-for="StartTime" class="form-control" />
-        <span asp-validation-for="StartTime" class="text-danger"></span>
+    <div class="form-group mb-3">
+        <label for="startTimeStr">Время начала</label>
+        <input type="datetime-local" name="startTimeStr" id="startTimeStr" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessage("startTimeStr")</span>
     </div>
     <div class="form-group mt-2">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
     </div>
 </form>
 @section Scripts {
