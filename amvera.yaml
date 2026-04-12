@@ -1,0 +1,11 @@
+meta:
+  environment: dotnet
+  toolVersion: "8.0"
+  projectRelPath: web_application_museum
+
+build:
+  dockerfile: false
+
+run:
+  persistenceMount: /app/wwwroot/uploads
+  containerPort: 8080

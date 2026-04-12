@@ -9,23 +9,39 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Railway передаёт PORT через переменную окружения
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<MuseumDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("MuseumDb")));
+// Строка подключения: сначала переменная окружения DATABASE_URL (Railway),
+// иначе из appsettings.json
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    // Railway даёт URL вида: postgresql://user:pass@host:port/db
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+    var connStr = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    builder.Services.AddDbContext<MuseumDbContext>(options => options.UseNpgsql(connStr));
+}
+else
+{
+    builder.Services.AddDbContext<MuseumDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("MuseumDb")));
+}
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath  = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
+        options.LoginPath       = "/Account/Login";
+        options.LogoutPath      = "/Account/Logout";
         options.AccessDeniedPath = "/Account/Login";
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.ExpireTimeSpan  = TimeSpan.FromHours(8);
     });
 
 builder.Services.AddAuthorization();
-
-// Сервисы приложения
 builder.Services.AddScoped<QRCodeService>();
 builder.Services.AddScoped<EmailService>();
 
@@ -63,7 +79,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// На Railway HTTPS терминируется на уровне прокси — редирект не нужен
+if (app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
