@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MuseumWebApp.Data;
@@ -7,6 +8,7 @@ using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace MuseumWebApp.Controllers
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class EmployeesController : Controller
     {
         private readonly MuseumDbContext _context;

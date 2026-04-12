@@ -1,0 +1,52 @@
+@model MuseumWebApp.Models.Ticket
+@{
+    ViewData["Title"] = "Билет куплен";
+}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-4 text-center">
+
+                <div style="font-size:3rem; margin-bottom:12px;">🎉</div>
+                <h4 class="fw-bold mb-1">Билет успешно оформлен!</h4>
+                <p class="text-muted mb-4" style="font-size:0.85rem;">
+                    Сохраните QR-код или код билета — предъявите на входе
+                </p>
+
+                <!-- QR-код -->
+                <div class="mb-3">
+                    <img src="@ViewBag.QrCode" alt="QR-код билета"
+                         style="width:180px; height:180px; border-radius:12px; border:3px solid var(--accent);" />
+                </div>
+
+                <!-- Уникальный код -->
+                <div class="mb-4 p-3" style="background:var(--bg-surface-2); border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em;">Код билета</div>
+                    <div style="font-family:monospace; font-size:1.1rem; font-weight:700; color:var(--accent); letter-spacing:0.1em;">
+                        @Model.TicketCode
+                    </div>
+                </div>
+
+                <!-- Детали -->
+                <div class="text-start mb-4 p-3" style="background:var(--bg-surface-2); border-radius:var(--radius);">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" style="font-size:0.82rem;">Экскурсия</span>
+                        <span class="fw-semibold" style="font-size:0.82rem;">@Model.TourSchedule?.Tour?.Title</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" style="font-size:0.82rem;">Дата</span>
+                        <span style="font-size:0.82rem;">@Model.TourSchedule?.StartTime.ToString("dd.MM.yyyy HH:mm")</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted" style="font-size:0.82rem;">Оплата</span>
+                        <span style="font-size:0.82rem; color:var(--danger-soft);">На месте</span>
+                    </div>
+                </div>
+
+                <a asp-action="MyTickets" class="btn btn-primary w-100 mb-2">Мои билеты</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100">На главную</a>
+            </div>
+        </div>
+    </div>
+</div>

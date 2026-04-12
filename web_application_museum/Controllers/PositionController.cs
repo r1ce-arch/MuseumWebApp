@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MuseumWebApp.Data;
 using MuseumWebApp.Models;
 
 namespace MuseumWebApp.Controllers
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class PositionsController : Controller
     {
         private readonly MuseumDbContext _context;

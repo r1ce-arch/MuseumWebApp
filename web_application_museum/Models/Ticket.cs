@@ -13,11 +13,16 @@ namespace MuseumWebApp.Models
         [ForeignKey("TourScheduleId")]
         public TourSchedule? TourSchedule { get; set; }
 
-        public DateTime SaleDate { get; set; } = DateTime.Now;
+        public int? VisitorId { get; set; }
 
-        [MaxLength(100)]
-        public string? VisitorName { get; set; }
+        [ForeignKey("VisitorId")]
+        public Visitor? Visitor { get; set; }
+
+        public DateTime SaleDate { get; set; } = DateTime.Today;
 
         public bool IsPaid { get; set; } = false;
+
+        [MaxLength(32)]
+        public string TicketCode { get; set; } = Guid.NewGuid().ToString("N").ToUpper();
     }
 }

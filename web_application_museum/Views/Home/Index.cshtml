@@ -1,119 +1,172 @@
 ﻿@{
     ViewData["Title"] = "Главная";
-    var heroGif = "/images/grass.gif"; /* гифка фона hero-блока */
+    var heroGif = "/images/grass.gif";
 }
 
 <style>
     .hero-block {
-        position: relative;
-        overflow: hidden;
+        position: relative; overflow: hidden;
         border-radius: 16px;
         background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
         border: 1px solid var(--border);
     }
     .hero-gif {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.15;
-        pointer-events: none;
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; opacity: 0.15; pointer-events: none;
     }
-    .hero-content {
-        position: relative;
-        z-index: 1;
-        padding: 64px 40px;
+    .hero-content { position: relative; z-index: 1; padding: 64px 40px; }
+    .section-label {
+        font-size: 0.72rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.12em;
+        color: var(--text-secondary); margin-bottom: 20px;
     }
-    .section-title {
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--text-secondary);
-        margin-bottom: 20px;
-    }
-    .nav-card {
+    .tour-card {
         background: var(--bg-surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
+        padding: 24px;
         transition: background 0.15s, transform 0.15s;
-        text-decoration: none;
-        color: var(--text-primary);
+        height: 100%;
+        display: flex; flex-direction: column;
     }
-    .nav-card:hover {
+    .tour-card:hover { background: var(--bg-surface-2); transform: translateY(-2px); }
+    .tour-card-title { font-weight: 700; font-size: 1.05rem; color: var(--text-heading); margin-bottom: 8px; }
+    .tour-card-desc  { font-size: 0.85rem; color: var(--text-secondary); flex-grow: 1; margin-bottom: 16px; }
+    .tour-card-meta  { display: flex; gap: 16px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px; }
+    .tour-card-meta span { display: flex; align-items: center; gap: 4px; }
+    .tour-price { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .buy-hint {
         background: var(--bg-surface-2);
-        transform: translateY(-2px);
-        color: var(--text-heading);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        display: flex; align-items: center; gap: 12px;
+        font-size: 0.85rem; color: var(--text-secondary);
     }
-    .nav-card-icon {
-        font-size: 1.6rem;
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg-surface-2);
-        border-radius: 8px;
-        flex-shrink: 0;
-    }
-    .nav-card-title {
-        font-weight: 700;
-        font-size: 0.95rem;
-        color: var(--text-heading);
-        margin-bottom: 2px;
-    }
-    .nav-card-desc {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        margin: 0;
-    }
+    .buy-hint a { color: var(--accent); font-weight: 600; }
 </style>
 
 <div class="container mt-4">
 
     <!-- Hero -->
-    <div class="hero-block mb-5">
+    <div class="hero-block text-center mb-5">
         @if (!string.IsNullOrEmpty(heroGif))
         {
             <img src="@heroGif" class="hero-gif" alt="" />
         }
-        <div class="hero-content text-center">
-            <p class="section-title">Добро пожаловать</p>
+        <div class="hero-content">
+            <p class="section-label">Добро пожаловать</p>
             <h1 class="display-5 fw-bold mb-3">Система управления музеем</h1>
             <p class="text-muted mb-4" style="max-width:480px; margin:0 auto;">
-                Экскурсии, билеты, сотрудники и экспонаты — всё в одном месте
+                Откройте для себя уникальные экскурсии и экспонаты нашего музея
             </p>
-            <a asp-controller="Tours" asp-action="Index" class="btn btn-primary px-5">
-                Начать работу
+            <a asp-controller="TourSchedules" asp-action="Index" class="btn btn-primary px-5">
+                Смотреть расписание
             </a>
         </div>
     </div>
 
-    <!-- Разделы -->
-    <p class="section-title">Разделы</p>
-    <div class="row g-3">
-        @foreach (var item in new[] {
-            new { Icon = "🎟️", Title = "Экскурсии",  Desc = "Цены, описания, длительность",     Ctrl = "Tours",         Act = "Index" },
-            new { Icon = "📅", Title = "Расписание", Desc = "Гиды, даты и время начала",         Ctrl = "TourSchedules", Act = "Index" },
-            new { Icon = "🎫", Title = "Билеты",     Desc = "Продажа и учёт посетителей",        Ctrl = "Tickets",       Act = "Index" },
-            new { Icon = "👥", Title = "Сотрудники", Desc = "Персонал и учётные записи",         Ctrl = "Employees",     Act = "Index" },
-            new { Icon = "🏺", Title = "Экспонаты",  Desc = "Коллекция с фото",                  Ctrl = "Exhibits",      Act = "Index" },
-            new { Icon = "⚙️", Title = "Должности",  Desc = "Роли и структура персонала",        Ctrl = "Positions",     Act = "Index" },
-        })
+    @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+    {
+        <!-- Панель управления для сотрудников -->
+        <p class="section-label">Управление</p>
+        <div class="row g-3 mb-5">
+            @{
+                var adminItems = new[]
+                {
+                    new { Icon = "🎟️", Title = "Экскурсии",  Desc = "Цены, описания, длительность",  Ctrl = "Tours",         Act = "Index" },
+                    new { Icon = "📅", Title = "Расписание", Desc = "Гиды, даты и время начала",      Ctrl = "TourSchedules", Act = "Index" },
+                    new { Icon = "🎫", Title = "Билеты",     Desc = "Продажа и учёт посетителей",     Ctrl = "Tickets",       Act = "Index" },
+                    new { Icon = "👥", Title = "Сотрудники", Desc = "Персонал и учётные записи",      Ctrl = "Employees",     Act = "Index" },
+                    new { Icon = "🏺", Title = "Экспонаты",  Desc = "Коллекция с фото",               Ctrl = "Exhibits",      Act = "Index" },
+                    new { Icon = "⚙️", Title = "Должности",  Desc = "Роли и структура персонала",     Ctrl = "Positions",     Act = "Index" },
+                };
+            }
+            @foreach (var item in adminItems)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <a asp-controller="@item.Ctrl" asp-action="@item.Act"
+                       style="text-decoration:none; display:block;">
+                        <div class="tour-card flex-row align-items-center" style="flex-direction:row!important; gap:16px; padding:16px 20px;">
+                            <div style="font-size:1.8rem; width:44px; text-align:center; flex-shrink:0;">@item.Icon</div>
+                            <div>
+                                <div class="tour-card-title" style="margin-bottom:2px;">@item.Title</div>
+                                <div class="tour-card-desc" style="margin-bottom:0;">@item.Desc</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Список экскурсий — виден всем -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <p class="section-label mb-0">Наши экскурсии</p>
+        <a asp-controller="Tours" asp-action="Index" class="btn btn-primary btn-sm">
+            Все экскурсии
+        </a>
+    </div>
+
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <div class="buy-hint mb-4">
+            <span style="font-size:1.3rem;">🎫</span>
+            <span>
+                Для покупки билетов необходимо
+                <a asp-controller="Account" asp-action="Register">зарегистрироваться</a>
+                или <a asp-controller="Account" asp-action="Login">войти</a> в аккаунт.
+                Просмотр экскурсий доступен без регистрации.
+            </span>
+        </div>
+    }
+
+    <div class="row g-4" id="tours-list">
+        @{
+            var allTours = ViewBag.Tours as System.Collections.Generic.List<MuseumWebApp.Models.Tour>;
+        }
+        @if (allTours != null && allTours.Any())
         {
-            <div class="col-md-6 col-lg-4">
-                <a asp-controller="@item.Ctrl" asp-action="@item.Act" class="nav-card">
-                    <div class="nav-card-icon">@item.Icon</div>
-                    <div>
-                        <div class="nav-card-title">@item.Title</div>
-                        <p class="nav-card-desc">@item.Desc</p>
+            foreach (var tour in allTours)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="tour-card">
+                        <div class="tour-card-title">@tour.Title</div>
+                        <div class="tour-card-desc">@tour.Description</div>
+                        <div class="tour-card-meta">
+                            <span>⏱ @((int)tour.Duration.TotalHours) ч.</span>
+                        </div>
+                        <div class="tour-price">@tour.Price.ToString("N0") ₽</div>
+                        @if (User.IsInRole("Visitor"))
+                        {
+                            <a asp-controller="Tickets" asp-action="Buy"
+                               asp-route-tourId="@tour.Id" class="btn btn-primary btn-sm w-100">
+                                Купить билет
+                            </a>
+                        }
+                        else if (!User.Identity!.IsAuthenticated)
+                        {
+                            <a asp-controller="Account" asp-action="Login"
+                               class="btn btn-primary btn-sm w-100">
+                                Войдите для покупки
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Tours" asp-action="Details"
+                               asp-route-id="@tour.Id" class="btn btn-outline-secondary btn-sm w-100">
+                                Подробнее
+                            </a>
+                        }
                     </div>
-                </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-muted">Экскурсии пока не добавлены.</p>
             </div>
         }
     </div>

@@ -26,8 +26,8 @@
                     {
                         <tr>
                             <td class="align-middle">@item.TourSchedule?.Tour?.Title</td>
-                            <td class="align-middle">@item.VisitorName</td>
-                            <td class="align-middle text-muted">@item.SaleDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="align-middle">@item.Visitor?.FullName</td>
+                            <td class="align-middle text-muted">@item.SaleDate.ToString("dd.MM.yyyy")</td>
                             <td class="align-middle">@(item.IsPaid ? "Да" : "Нет")</td>
                             <td class="text-end text-nowrap align-middle">
                                 <a asp-action="Edit"    asp-route-id="@item.Id">Изменить</a> |

@@ -1,11 +1,15 @@
 ﻿@model IEnumerable<MuseumWebApp.Models.Tour>
 @{
     ViewData["Title"] = "Экскурсии";
+    bool isAdmin = User.IsInRole("Admin") || User.IsInRole("Employee");
 }
 
 <div class="d-flex align-items-center justify-content-between mb-3">
     <h1 class="h3 mb-0">Экскурсии</h1>
-    <a asp-action="Create" class="btn btn-primary">Создать</a>
+    @if (isAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    }
 </div>
 
 <div class="card">
@@ -30,9 +34,18 @@
                             <td class="align-middle">@item.Price.ToString("N0") ₽</td>
                             <td class="align-middle">@((int)item.Duration.TotalHours) ч.</td>
                             <td class="text-end text-nowrap align-middle">
-                                <a asp-action="Edit"    asp-route-id="@item.Id">Изменить</a> |
-                                <a asp-action="Details" asp-route-id="@item.Id">Детали</a> |
-                                <a asp-action="Delete"  asp-route-id="@item.Id">Удалить</a>
+                                @if (isAdmin)
+                                {
+                                    <text>
+                                    <a asp-action="Edit"   asp-route-id="@item.Id">Изменить</a> |
+                                    <a asp-action="Details" asp-route-id="@item.Id">Детали</a> |
+                                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                                    </text>
+                                }
+                                else
+                                {
+                                    <a asp-action="Details" asp-route-id="@item.Id">Подробнее</a>
+                                }
                             </td>
                         </tr>
                     }

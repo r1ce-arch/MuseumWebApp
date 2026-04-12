@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MuseumWebApp.Data;
 using MuseumWebApp.Models;
@@ -14,11 +15,13 @@ namespace MuseumWebApp.Controllers
             _context = context;
         }
 
+        // Доступно всем
         public async Task<IActionResult> Index()
         {
             return View(await _context.Tours.ToListAsync());
         }
 
+        // Доступно всем
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -26,13 +29,11 @@ namespace MuseumWebApp.Controllers
             return tour == null ? NotFound() : View(tour);
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
+        [Authorize(Roles = "Admin,Employee")]
+        public IActionResult Create() => View();
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,Price")] Tour tour, int durationHours)
         {
             if (durationHours <= 0)
@@ -49,6 +50,7 @@ namespace MuseumWebApp.Controllers
             return View(tour);
         }
 
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -56,12 +58,11 @@ namespace MuseumWebApp.Controllers
             return tour == null ? NotFound() : View(tour);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Price")] Tour tour, int durationHours)
         {
             if (id != tour.Id) return NotFound();
-
             if (durationHours <= 0)
                 ModelState.AddModelError("durationHours", "Укажите длительность больше 0 часов.");
 
@@ -84,6 +85,7 @@ namespace MuseumWebApp.Controllers
             return View(tour);
         }
 
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -91,8 +93,8 @@ namespace MuseumWebApp.Controllers
             return tour == null ? NotFound() : View(tour);
         }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tour = await _context.Tours.FindAsync(id);

@@ -8,9 +8,9 @@
     <dt class="col-sm-2">Экскурсия</dt>
     <dd class="col-sm-10">@Model.TourSchedule?.Tour?.Title</dd>
     <dt class="col-sm-2">Посетитель</dt>
-    <dd class="col-sm-10">@Model.VisitorName</dd>
+    <dd class="col-sm-10">@Model.Visitor?.FullName</dd>
     <dt class="col-sm-2">Дата продажи</dt>
-    <dd class="col-sm-10">@Model.SaleDate</dd>
+    <dd class="col-sm-10">@Model.SaleDate.ToString("dd.MM.yyyy")</dd>
     <dt class="col-sm-2">Оплачен</dt>
     <dd class="col-sm-10">@(Model.IsPaid ? "Да" : "Нет")</dd>
 </dl>

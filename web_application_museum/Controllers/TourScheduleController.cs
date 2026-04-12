@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MuseumWebApp.Data;
@@ -22,16 +23,15 @@ namespace MuseumWebApp.Controllers
                 .OrderBy(t => t.Title)
                 .ToListAsync();
 
-            // Показываем всех сотрудников, не фильтруем по должности
+            // Только сотрудники с должностью "Гид"
             var guides = await _context.Employees
                 .AsNoTracking()
                 .Include(e => e.Position)
+                .Where(e => e.Position != null && e.Position.Title == "Гид")
                 .OrderBy(e => e.FullName)
                 .Select(e => new {
                     e.Id,
-                    DisplayName = e.Position != null
-                        ? e.FullName + " (" + e.Position.Title + ")"
-                        : e.FullName
+                    DisplayName = e.FullName
                 })
                 .ToListAsync();
 
@@ -39,7 +39,7 @@ namespace MuseumWebApp.Controllers
             ViewData["GuideId"] = new SelectList(guides, "Id", "DisplayName", selectedGuideId);
         }
 
-        // GET: TourSchedules
+        // Доступно всем
         public async Task<IActionResult> Index()
         {
             var tourSchedules = _context.TourSchedules
@@ -48,7 +48,7 @@ namespace MuseumWebApp.Controllers
             return View(await tourSchedules.ToListAsync());
         }
 
-        // GET: TourSchedules/Details/5
+        // Доступно всем
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -69,6 +69,7 @@ namespace MuseumWebApp.Controllers
         }
 
         // GET: TourSchedules/Create
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Create()
         {
             await PopulateSelectListsAsync();
@@ -78,6 +79,7 @@ namespace MuseumWebApp.Controllers
         // POST: TourSchedules/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Create([Bind("Id,TourId,GuideId")] TourSchedule tourSchedule, string startTimeStr)
         {
             if (DateTime.TryParse(startTimeStr, out var parsedTime))
@@ -96,6 +98,7 @@ namespace MuseumWebApp.Controllers
         }
 
         // GET: TourSchedules/Edit/5
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -115,6 +118,7 @@ namespace MuseumWebApp.Controllers
         // POST: TourSchedules/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,TourId,GuideId")] TourSchedule tourSchedule, string startTimeStr)
         {
             if (id != tourSchedule.Id) return NotFound();
@@ -143,6 +147,7 @@ namespace MuseumWebApp.Controllers
         }
 
         // GET: TourSchedules/Delete/5
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -165,6 +170,7 @@ namespace MuseumWebApp.Controllers
         // POST: TourSchedules/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tourSchedule = await _context.TourSchedules.FindAsync(id);

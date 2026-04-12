@@ -1,0 +1,59 @@
+@model IEnumerable<MuseumWebApp.Models.Ticket>
+@{
+    ViewData["Title"] = "Мои билеты";
+    var qrCodes = ViewBag.QrCodes as Dictionary<int, string> ?? new Dictionary<int, string>();
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">Мои билеты</h1>
+    <a asp-action="Buy" class="btn btn-primary">Купить билет</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <div style="font-size:3rem; margin-bottom:12px;">🎫</div>
+            <p class="text-muted mb-3">У вас пока нет билетов</p>
+            <a asp-action="Buy" class="btn btn-primary px-4">Купить первый билет</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var ticket in Model)
+        {
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <div class="fw-bold" style="font-size:1rem;">@ticket.TourSchedule?.Tour?.Title</div>
+                                <div class="text-muted" style="font-size:0.82rem;">
+                                    📅 @ticket.TourSchedule?.StartTime.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            </div>
+                            <span class="badge" style="background:@(ticket.IsPaid ? "var(--accent)" : "var(--bg-surface-2)"); color:@(ticket.IsPaid ? "#000" : "var(--text-secondary)"); border-radius:20px; padding:4px 10px; font-size:0.75rem;">
+                                @(ticket.IsPaid ? "Оплачен" : "Не оплачен")
+                            </span>
+                        </div>
+
+                        @if (qrCodes.TryGetValue(ticket.Id, out var qr))
+                        {
+                            <div class="text-center mb-3">
+                                <img src="@qr" alt="QR"
+                                     style="width:120px; height:120px; border-radius:8px; border:2px solid var(--border);" />
+                            </div>
+                        }
+
+                        <div class="text-center p-2"
+                             style="background:var(--bg-surface-2); border-radius:var(--radius); font-family:monospace; font-size:0.85rem; color:var(--accent); letter-spacing:0.08em;">
+                            @ticket.TicketCode
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

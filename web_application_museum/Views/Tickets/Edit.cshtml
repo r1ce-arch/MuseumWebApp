@@ -5,16 +5,21 @@
 <h1>Редактировать билет</h1>
 <form asp-action="Edit">
     <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="SaleDate" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="TourScheduleId">Расписание экскурсии</label>
-        <select asp-for="TourScheduleId" asp-items="ViewBag.TourScheduleId" class="form-control"></select>
+        <select asp-for="TourScheduleId" asp-items="ViewBag.TourScheduleId" class="form-control">
+            <option value="">— Выберите —</option>
+        </select>
     </div>
-    <div class="form-group">
-        <label asp-for="VisitorName">Имя посетителя</label>
-        <input asp-for="VisitorName" class="form-control" />
+    <div class="form-group mb-3">
+        <label asp-for="VisitorId">Посетитель</label>
+        <select asp-for="VisitorId" asp-items="ViewBag.VisitorId" class="form-control">
+            <option value="">— Выберите посетителя —</option>
+        </select>
     </div>
-    <div class="form-group form-check">
+    <div class="form-group form-check mb-3">
         <input asp-for="IsPaid" class="form-check-input" />
         <label asp-for="IsPaid" class="form-check-label">Оплачен</label>
     </div>

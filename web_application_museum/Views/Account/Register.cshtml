@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body p-4">
+                <h4 class="mb-4">Регистрация</h4>
+
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Имя</label>
+                        <input type="text" name="fullName" id="fullName" class="form-control" />
+                        <span class="text-danger">@Html.ValidationMessage("fullName")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" />
+                        <span class="text-danger">@Html.ValidationMessage("email")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" name="password" id="password" class="form-control" />
+                        <span class="text-danger">@Html.ValidationMessage("password")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" />
+                        <span class="text-danger">@Html.ValidationMessage("confirmPassword")</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                </form>
+
+                <hr class="my-3" style="border-color: var(--border);">
+                <p class="text-center text-muted mb-0" style="font-size:0.85rem;">
+                    Уже есть аккаунт?
+                    <a asp-action="Login">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

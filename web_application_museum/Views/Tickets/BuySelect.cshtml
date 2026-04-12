@@ -1,0 +1,82 @@
+@model IEnumerable<MuseumWebApp.Models.TourSchedule>
+@{
+    ViewData["Title"] = "Купить билет";
+    string? tourTitle = ViewBag.TourTitle as string;
+    int? tourId = ViewBag.TourId as int?;
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h3 mb-0">
+            @(tourTitle != null ? $"Расписание: {tourTitle}" : "Выберите экскурсию")
+        </h1>
+        @if (tourId.HasValue)
+        {
+            <a asp-action="Buy" class="text-muted" style="font-size:0.82rem;">
+                ← Все экскурсии
+            </a>
+        }
+    </div>
+</div>
+
+@if (!User.Identity!.IsAuthenticated)
+{
+    <div class="mb-4 p-3" style="background:var(--bg-surface-2); border:1px solid var(--accent); border-radius:var(--radius); color:var(--text-primary); font-size:0.85rem;">
+        <strong style="color:var(--accent);">🎫 Для покупки билета</strong> необходимо
+        <a asp-controller="Account" asp-action="Register">зарегистрироваться</a>
+        или <a asp-controller="Account" asp-action="Login">войти</a>.
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <div style="font-size:2.5rem; margin-bottom:12px;">📅</div>
+            <p class="text-muted mb-3">Расписание для этой экскурсии пока не добавлено</p>
+            <a asp-action="Buy" class="btn btn-primary">Смотреть все экскурсии</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var s in Model)
+        {
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="fw-bold mb-1">@s.Tour?.Title</h5>
+                        <div class="text-muted mb-1" style="font-size:0.85rem;">
+                            📅 @s.StartTime.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                        @if (s.Guide != null)
+                        {
+                            <div class="text-muted mb-2" style="font-size:0.82rem;">
+                                👤 @s.Guide.FullName
+                            </div>
+                        }
+                        @if (s.Tour != null)
+                        {
+                            <div style="font-size:1rem; font-weight:700; color:var(--accent); margin-bottom:12px;">
+                                @s.Tour.Price.ToString("N0") ₽
+                            </div>
+                        }
+                        <div class="mt-auto">
+                            @if (User.IsInRole("Visitor"))
+                            {
+                                <a asp-action="Buy" asp-route-scheduleId="@s.Id"
+                                   class="btn btn-primary btn-sm w-100">Выбрать</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login"
+                                   class="btn btn-primary btn-sm w-100">Войдите для покупки</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

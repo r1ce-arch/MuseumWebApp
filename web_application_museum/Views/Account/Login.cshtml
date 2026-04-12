@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body p-4">
+                <h4 class="mb-4">Вход в систему</h4>
+
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label for="login" class="form-label">Логин или Email</label>
+                        <input type="text" name="login" id="login" class="form-control" autofocus />
+                        <div class="form-text text-muted" style="font-size:0.75rem;">
+                            Сотрудники вводят логин, посетители — email
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" name="password" id="password" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                </form>
+
+                <hr class="my-3" style="border-color: var(--border);">
+                <p class="text-center text-muted mb-0" style="font-size:0.85rem;">
+                    Нет аккаунта?
+                    <a asp-action="Register">Зарегистрироваться</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
