@@ -22,12 +22,12 @@ if (!string.IsNullOrEmpty(databaseUrl))
 {
     var uri      = new Uri(databaseUrl);
     var userInfo = uri.UserInfo.Split(':');
-    var host     = uri.Host;
-    var port     = uri.Port > 0 ? uri.Port : 5432;
-    var database = uri.AbsolutePath.TrimStart('/');
-    var username = userInfo[0];
-    var password = userInfo.Length > 1 ? userInfo[1] : "";
-    var connStr  = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    var dbHost   = uri.Host;
+    var dbPort   = uri.Port > 0 ? uri.Port : 5432;
+    var dbName   = uri.AbsolutePath.TrimStart('/');
+    var dbUser   = userInfo[0];
+    var dbPass   = userInfo.Length > 1 ? userInfo[1] : "";
+    var connStr  = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true";
     builder.Services.AddDbContext<MuseumDbContext>(options => options.UseNpgsql(connStr));
 }
 else
