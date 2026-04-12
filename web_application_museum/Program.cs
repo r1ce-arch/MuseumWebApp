@@ -20,10 +20,14 @@ builder.Services.AddControllersWithViews();
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 if (!string.IsNullOrEmpty(databaseUrl))
 {
-    // Railway даёт URL вида: postgresql://user:pass@host:port/db
-    var uri = new Uri(databaseUrl);
+    var uri      = new Uri(databaseUrl);
     var userInfo = uri.UserInfo.Split(':');
-    var connStr = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    var host     = uri.Host;
+    var port     = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+    var connStr  = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
     builder.Services.AddDbContext<MuseumDbContext>(options => options.UseNpgsql(connStr));
 }
 else
